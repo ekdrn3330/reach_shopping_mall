@@ -1,8 +1,34 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import styled from 'style-components';
+import styled from 'styled-components';
+import './Detail.scss';
+
+let 박스 = styled.div`
+    padding : 20px;
+`;
+
+let 제목 = styled.h4`
+    font-size : 25px;
+    color : ${ props => props.색상 };
+`;
+
+// class Detail2 extends React.Component {
+
+//     componentDidMount() {
+        
+//     }
+
+//     componentWillUnmount() {
+
+//     }
+
+// }
 
 function Detail(props) {
+
+    useEffect(()=>{
+        
+    });
 
     let { id } = useParams();
     let history = useHistory();
@@ -12,9 +38,17 @@ function Detail(props) {
 
     return (
         <div className="container">
+            <박스>
+                <제목 className="red">상세페이지</제목>
+            </박스>
+
+            <div className="my-alert2">
+                <p>재고가 얼마 남지 않았습니다</p>
+            </div>
+
             <div className="row">
             <div className="col-md-6">
-                <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="100%" />
+                <img src={ 'https://codingapple1.github.io/shop/shoes' + ( 찾은상품.id + 1 ) + '.jpg' } alt="" width="100%" />
             </div>
             <div className="col-md-6 mt-4">
                 <h4 className="pt-5">{ 찾은상품.title }</h4>
