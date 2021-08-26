@@ -15,7 +15,7 @@ function App() {
     <div className="App">
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand>React-Bootstrap</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -34,18 +34,25 @@ function App() {
       </Navbar>
       
       <Switch>
-
+        
         <Route exact path="/">
           <div className="background">
             <h1>20% Season Off</h1>
             <p>
-              dasdsadsadasdaskjdhaskjdhkjashdkjsa
+              react shopping mall
             </p>
             <p>
               <Button variant="primary">Primary</Button>
             </p>
           </div>
           <div className="container">
+            <button onClick={()=>{ 
+              var newArray = [...shoes];
+              newArray.sort((a, b)=>{
+                return b.price-a.price;
+              });
+              shoes변경(newArray);
+            }}>가격순정렬</button>
             <div className="row">
               {
                 shoes.map((a, i)=>{
@@ -56,8 +63,8 @@ function App() {
           </div>
         </Route>
 
-        <Route path="/detail">
-          <Detail />
+        <Route path="/detail/:id">
+          <Detail shoes={shoes} />
         </Route>
 
         <Route path="/:id">
@@ -75,7 +82,7 @@ function App() {
 function Card(props) {
   return (
     <div className="col-md-4">
-      <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.i + 1) + '.jpg' } alt="" width="100%" />
+      <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.shoes.id + 1) + '.jpg' } alt="" width="100%" />
       <h4>{ props.shoes.title }</h4>
       <p>{ props.shoes.content } &amp; {props.shoes.price}원</p>
     </div>
