@@ -1,8 +1,11 @@
 /* eslint-disable */
+
 import React, {useState} from 'react';
 import { Navbar,Container,Nav,NavDropdown,Button } from 'react-bootstrap';
 import './App.css';
 import Data from './data';
+import Detail from './Detail';
+import { Link, Route, Switch } from 'react-router-dom';
 
 function App() {
 
@@ -16,8 +19,8 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Link</Nav.Link>
+              <Nav.Link><Link to="/">Home</Link></Nav.Link>
+              <Nav.Link><Link to="/Detail">Detail</Link></Nav.Link>
               <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                 <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
@@ -29,42 +32,53 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      
+      <Switch>
 
-      <div className="background">
-        <h1>20% Season Off</h1>
-        <p>
-          dasdsadsadasdaskjdhaskjdhkjashdkjsa
-        </p>
-        <p>
-          <Button variant="primary">Primary</Button>
-        </p>
-      </div>
+        <Route exact path="/">
+          <div className="background">
+            <h1>20% Season Off</h1>
+            <p>
+              dasdsadsadasdaskjdhaskjdhkjashdkjsa
+            </p>
+            <p>
+              <Button variant="primary">Primary</Button>
+            </p>
+          </div>
+          <div className="container">
+            <div className="row">
+              {
+                shoes.map((a, i)=>{
+                  return <Card shoes={shoes[i]} i={i} key={i} />
+                })
+              }
+            </div>
+          </div>
+        </Route>
 
-      <div className="container">
-        <div className="row">
-          <Goods shoes={shoes} />
-        </div>
-      </div>
+        <Route path="/detail">
+          <Detail />
+        </Route>
 
+        <Route path="/:id">
+              <div>아무거나적었을때 이거 보여주셈</div>
+        </Route>
+
+        {/* <Route path="/어쩌구" component={Modal} ></Route> */}
+
+      </Switch>
+      
     </div>
   );
 }
 
-function Goods(props) {
+function Card(props) {
   return (
-    <>
-      {
-        props.shoes.map((curent, index, array)=>{
-          return (
-            <div className="col-md-4" key={index}>
-              <img src="https://codingapple1.github.io/shop/shoes1.jpg" alt="" width="100%" />
-              <h4>{ props.shoes[index].title }</h4>
-              <p>{ props.shoes[index].content } &amp; 가격</p>
-            </div>
-          )
-        })
-      }
-    </>
+    <div className="col-md-4">
+      <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.i + 1) + '.jpg' } alt="" width="100%" />
+      <h4>{ props.shoes.title }</h4>
+      <p>{ props.shoes.content } &amp; {props.shoes.price}원</p>
+    </div>
   );
 }
 
