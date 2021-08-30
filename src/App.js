@@ -1,15 +1,22 @@
 /* eslint-disable */
 
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { Navbar,Container,Nav,NavDropdown,Button } from 'react-bootstrap';
 import './App.css';
 import Data from './data';
 import Detail from './Detail';
+import axios from 'axios';
+import Cart from './Cart.js';
+
+export let 재고context = React.createContext();
+
 import { Link, Route, Switch } from 'react-router-dom';
 
 function App() {
 
+  let [onOff, onOff변경] = useState(false);
   let [shoes, shoes변경] = useState(Data);
+  let [재고,재고변경] = useState([10,11,12]);
 
   return (
     <div className="App">
@@ -46,6 +53,7 @@ function App() {
             </p>
           </div>
           <div className="container">
+            
             <button onClick={()=>{ 
               var newArray = [...shoes];
               newArray.sort((a, b)=>{
@@ -53,6 +61,9 @@ function App() {
               });
               shoes변경(newArray);
             }}>가격순정렬</button>
+
+            <재고context.Provider value={재고}>
+
             <div className="row">
               {
                 shoes.map((a, i)=>{
@@ -60,11 +71,40 @@ function App() {
                 })
               }
             </div>
+
+            </재고context.Provider>
+
+            {
+              onOff === true
+              ? <div><div class="spinner-border" role="status" /></div>
+              : null
+            }
+            <button class="btn btn-primary" onClick={()=>{
+
+              onOff변경(true);
+
+              axios.get('https://codingapple1.github.io/shop/data2.json')
+              .then((result)=>{
+                onOff변경(false);
+                shoes변경( [...shoes, ...result.data] );
+              })
+              .catch(()=>{
+                console.log('실패했어요.');
+              });
+
+            }}>더보기</button>
           </div>
         </Route>
 
+        
         <Route path="/detail/:id">
-          <Detail shoes={shoes} />
+          <재고context.Provider value={재고}>
+            <Detail shoes={shoes} 재고={ 재고 } 재고변경={재고변경} />
+          </재고context.Provider>
+        </Route>
+        
+        <Route path="/cart">
+            <Cart />
         </Route>
 
         <Route path="/:id">
@@ -80,13 +120,25 @@ function App() {
 }
 
 function Card(props) {
+
+  let 재고 = useContext(재고context);
+
   return (
     <div className="col-md-4">
       <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.shoes.id + 1) + '.jpg' } alt="" width="100%" />
       <h4>{ props.shoes.title }</h4>
       <p>{ props.shoes.content } &amp; {props.shoes.price}원</p>
+      {재고[props.i]}
+      <Test />
     </div>
   );
 }
+function Test(props) {
+  let 재고 = useContext(재고context);
+  return (
+    <p>재고 : {재고}</p>
+  )
+}
+
 
 export default App;
