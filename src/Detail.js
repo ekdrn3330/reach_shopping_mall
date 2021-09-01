@@ -6,7 +6,7 @@ import './Detail.scss';
 import {재고context} from './App.js';
 import { Nav } from 'react-bootstrap';
 import { CSSTransition } from 'react-transition-group';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 
 let 박스 = styled.div`
     padding : 20px;
@@ -31,13 +31,30 @@ let 제목 = styled.h4`
 
 function Detail(props) {
 
+    let state = useSelector((state)=>state);
+    let dispatch = useDispatch();
+
     let 재고 = useContext(재고context);
 
     useEffect(()=>{
 
-        let 타이머 = setTimeout(()=>{ alert변경(false); },2000);
+        var a = localStorage.getItem('arr');
+        var b = JSON.parse(a);
+        if(b == null) {
+            console.log('장바구니에 상품이 없음');
+            localStorage.setItem('arr',JSON.stringify([id]));
+        } else {
+            console.log('장바구니에 상품이 있음');
+            b.push(id);
+            b = new Set(b);
+            b = [...b];
+            localStorage.setItem('arr',JSON.stringify(b));
+        }
+        console.log(b);
 
+        let 타이머 = setTimeout(()=>{ alert변경(false); },2000);
         return ()=>{ clearTimeout(타이머); }
+
     },[]);
 
     let [스위치, 스위치변경] = useState(false);
@@ -45,6 +62,7 @@ function Detail(props) {
     let [alert, alert변경] = useState(true);
     let { id } = useParams();
     let history = useHistory();
+    let [수량, 수량변경] = useState(0);
     let 찾은상품 = props.shoes.find((상품)=>{
         return 상품.id == id;
     });
@@ -71,13 +89,10 @@ function Detail(props) {
                 <p>{ 찾은상품.content }</p>
                 <p>{ 찾은상품.price }원</p>
 
-                <Info 재고={props.재고} />
+                <Info 수량={수량} 수량변경={수량변경} />
 
                 <button className="btn btn-danger" onClick={()=>{
-                    var newArray = [...props.재고];
-                    newArray = [newArray[0] - 1, 11, 12];
-                    props.재고변경(newArray);
-                    props.dispatch({ type : '항목추가', payload : {id : 2, name : '새로운상품', quan : 1} });
+                    dispatch({ type : '항목추가', payload : {id : 찾은상품.id, name : 찾은상품.title, quan : state.reducer3} });
                     history.push('/cart');
                 }} >주문하기</button>
                 &nbsp;
@@ -122,20 +137,20 @@ function TabContent(props) {
 
 
 function Info() {
-    let 재고 = useContext(재고context);
+    let state = useSelector((state)=>state);
+    let dispatch = useDispatch();
     return (
-        <p>재고 : { 재고 }</p>
+        <p>수량<input onChange={(e)=>{ dispatch({ type : '수량변경', 수량 : e.target.value }); }} /></p>
     );
 }
 
-function state를props화(state) {
-    console.log(state);
-    return {
-        state : state.reducer,
-        alert열렸니 : state.reducer2
-    }
-}
+// function state를props화(state) {
+//     return {
+//         state : state.reducer,
+//         alert열렸니 : state.reducer2
+//     }
+// }
 
-export default connect(state를props화)(Detail)
+// export default connect(state를props화)(Detail)
 
-// export default Detail;
+export default Detail;

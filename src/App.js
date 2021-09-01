@@ -1,22 +1,32 @@
 /* eslint-disable */
 
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, lazy, Suspense} from 'react';
 import { Navbar,Container,Nav,NavDropdown,Button } from 'react-bootstrap';
 import './App.css';
 import Data from './data';
-import Detail from './Detail';
-import axios from 'axios';
+// import Detail from './Detail';
+let Detail = lazy(() => import('./Detail.js'));
 import Cart from './Cart.js';
+import axios from 'axios';
 
 export let 재고context = React.createContext();
 
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link, Route, Switch, useHistory } from 'react-router-dom';
+import { useEffect } from 'react';
+let Abc = lazy(()=> import('./Abc.js'));
 
 function App() {
 
   let [onOff, onOff변경] = useState(false);
   let [shoes, shoes변경] = useState(Data);
   let [재고,재고변경] = useState([10,11,12]);
+  let [count, setCount] = useState(0);
+  let [age, setAge] = useState(20);
+  useEffect(()=>{
+    if(count != 0 && count < 3) {
+      setAge(age+1);
+    }
+  },[count])
 
   return (
     <div className="App">
@@ -43,6 +53,12 @@ function App() {
       <Switch>
         
         <Route exact path="/">
+          <div>
+            <div>안녕하십니까 전 {age}</div>
+            <button onClick={()=>{
+              setCount(count+1);
+            }}>누르면한살먹기</button>
+          </div>
           <div className="background">
             <h1>20% Season Off</h1>
             <p>
@@ -99,12 +115,20 @@ function App() {
         
         <Route path="/detail/:id">
           <재고context.Provider value={재고}>
-            <Detail shoes={shoes} 재고={ 재고 } 재고변경={재고변경} />
+            <Suspense fallback={<div>로딩중이에요</div>}>
+              <Detail shoes={shoes} 재고={ 재고 } 재고변경={재고변경} />
+            </Suspense>
           </재고context.Provider>
         </Route>
         
         <Route path="/cart">
             <Cart />
+        </Route>
+
+        <Route path="/abc">
+          <Suspense fallback={<div>로딩중입니다.</div>}>
+            <Abc />
+          </Suspense>
         </Route>
 
         <Route path="/:id">
@@ -122,9 +146,10 @@ function App() {
 function Card(props) {
 
   let 재고 = useContext(재고context);
+  let history = useHistory();
 
   return (
-    <div className="col-md-4">
+    <div className="col-md-4" onClick={()=>{ history.push('/detail/' + props.shoes.id); }}>
       <img src={ 'https://codingapple1.github.io/shop/shoes' + (props.shoes.id + 1) + '.jpg' } alt="" width="100%" />
       <h4>{ props.shoes.title }</h4>
       <p>{ props.shoes.content } &amp; {props.shoes.price}원</p>
@@ -133,6 +158,7 @@ function Card(props) {
     </div>
   );
 }
+
 function Test(props) {
   let 재고 = useContext(재고context);
   return (
